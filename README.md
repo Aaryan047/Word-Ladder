@@ -22,6 +22,24 @@ No login, no accounts, no streaks. Open it, play, close it.
   ghosts (Blinky, Pinky, Inky, Clyde), available in both modes.
 - Set in EB Garamond throughout.
 
+## Themes
+
+There's a mode toggle (☾ / ☀) that switches between light and dark base
+palettes, and 4 accent themes named after the Pac-Man ghosts — each one
+available in both modes, so 8 combinations total:
+
+| Ghost  | Accent color |
+|--------|--------------|
+| Blinky | red          |
+| Pinky  | pink         |
+| Inky   | cyan         |
+| Clyde  | orange       |
+
+Click a swatch dot to pick a ghost; click the moon/sun icon to flip light/dark
+while keeping whichever ghost is selected. The choice is saved in
+`localStorage`, so it persists between visits — no account needed for that,
+it's just a local browser preference.
+
 ## How it works
 
 - `index.html` — markup / structure.
