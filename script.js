@@ -1,16 +1,14 @@
-// ---------- THEME (Pac-Man ghosts: Blinky, Pinky, Inky, Clyde — light + dark each) ----------
-const LIGHT_BASE = { bg:'#fafaf9', fg:'#18181b', card:'#ffffff', border:'#e4e4e7' };
-const DARK_BASE  = { bg:'#121214', fg:'#f2f2f0', card:'#1b1b1f', border:'#2a2a2f' };
-const GHOSTS = [
-  { id:'blinky', light:'#e11d2e', dark:'#ff5a5f' }, // red
-  { id:'pinky',  light:'#d6409f', dark:'#ff8fd6' }, // pink
-  { id:'inky',   light:'#0e8fa6', dark:'#4dd9e8' }, // cyan
-  { id:'clyde',  light:'#c9760f', dark:'#ffb454' }, // orange
+// ---------- THEME (Pac-Man ghosts: Blinky, Pinky, Inky, Clyde — light + dark, distinct bg per ghost) ----------
+const THEMES = [
+  { id:'blinky-light', mode:'light', accent:'#e11d2e', bg:'#fdf2f2', fg:'#2a1516', card:'#ffffff', border:'#f3d4d4' },
+  { id:'blinky-dark',  mode:'dark',  accent:'#ff5a5f', bg:'#1a1013', fg:'#f5e6e7', card:'#241417', border:'#3a1e22' },
+  { id:'pinky-light',  mode:'light', accent:'#d6409f', bg:'#fdf2f9', fg:'#2a1524', card:'#ffffff', border:'#f3d4ea' },
+  { id:'pinky-dark',   mode:'dark',  accent:'#ff8fd6', bg:'#1a1018', fg:'#f5e6f0', card:'#241420', border:'#3a1e30' },
+  { id:'inky-light',   mode:'light', accent:'#0e8fa6', bg:'#f0fafb', fg:'#122a2d', card:'#ffffff', border:'#cdeef2' },
+  { id:'inky-dark',    mode:'dark',  accent:'#4dd9e8', bg:'#0e1a1c', fg:'#e2f5f6', card:'#132428', border:'#1e363a' },
+  { id:'clyde-light',  mode:'light', accent:'#c9760f', bg:'#fdf6ec', fg:'#2a1f10', card:'#ffffff', border:'#f3e2c4' },
+  { id:'clyde-dark',   mode:'dark',  accent:'#ffb454', bg:'#1a140d', fg:'#f5ecdf', card:'#241c12', border:'#3a2c1a' },
 ];
-const THEMES = GHOSTS.flatMap(g => [
-  { id:g.id + '-light', mode:'light', accent:g.light, ...LIGHT_BASE },
-  { id:g.id + '-dark',  mode:'dark',  accent:g.dark,  ...DARK_BASE  },
-]);
 const modeBtn = document.getElementById('modeToggle');
 const swatchWrap = document.getElementById('swatches');
 let currentTheme = localStorage.getItem('wl_theme') || 'blinky-light';
@@ -192,18 +190,32 @@ document.getElementById('startCustomBtn').onclick = async () => {
   startGame(a, b, null);
 };
 
+let difficulty = 'medium';
+document.querySelectorAll('.diffBtn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.diffBtn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    difficulty = btn.dataset.d;
+  };
+});
+const DIFFICULTY_SPECS = {
+  easy:   { lengths: [5, 6],       minSteps: 2, maxSteps: 4 },
+  medium: { lengths: [6, 7, 8],    minSteps: 4, maxSteps: 6 },
+  hard:   { lengths: [7, 8, 9],    minSteps: 6, maxSteps: 9 },
+};
+
 document.getElementById('randomiseBtn').onclick = () => {
   const msg = document.getElementById('customMsg');
   msg.className = 'msg';
-  const lengths = [5, 6, 7, 8, 9]; // lengths with real ladder connectivity
-  const maxTries = 40;
+  const spec = DIFFICULTY_SPECS[difficulty];
+  const maxTries = 50;
   for (let i = 0; i < maxTries; i++){
-    const length = lengths[Math.floor(Math.random() * lengths.length)];
+    const length = spec.lengths[Math.floor(Math.random() * spec.lengths.length)];
     const words = GAME_DATA.wordSets[String(length)];
     if (!words || words.length < 2) continue;
     const start = words[Math.floor(Math.random() * words.length)];
-    const dist = bfsDistances(start, 8);
-    const candidates = [...dist.entries()].filter(([w, d]) => d >= 3 && d <= 8).map(([w]) => w);
+    const dist = bfsDistances(start, spec.maxSteps);
+    const candidates = [...dist.entries()].filter(([w, d]) => d >= spec.minSteps && d <= spec.maxSteps).map(([w]) => w);
     if (!candidates.length) continue;
     const end = candidates[Math.floor(Math.random() * candidates.length)];
     const path = bfsPath(start, end);
@@ -222,8 +234,6 @@ function startGame(start, end, knownPath){
   document.getElementById('customSetup').classList.add('hidden');
   document.getElementById('resultArea').classList.add('hidden');
   document.getElementById('gameArea').classList.remove('hidden');
-  document.getElementById('startWord').textContent = start;
-  document.getElementById('endWord').textContent = end;
   document.getElementById('gameMsg').textContent = '';
   document.getElementById('guessInput').value = '';
   renderChain();
@@ -232,12 +242,20 @@ function startGame(start, end, knownPath){
 function renderChain(){
   const ol = document.getElementById('chain');
   ol.innerHTML = '';
-  state.chain.forEach(w => {
+  state.chain.forEach((w, i) => {
     const li = document.createElement('li');
     li.textContent = w;
+    if (i === 0) li.classList.add('step-start');
     if (w === state.end) li.classList.add('step-end');
     ol.appendChild(li);
   });
+  const reached = state.chain[state.chain.length - 1] === state.end;
+  if (!reached){
+    const ghost = document.createElement('li');
+    ghost.textContent = state.end;
+    ghost.classList.add('step-ghost');
+    ol.appendChild(ghost);
+  }
   document.getElementById('undoBtn').disabled = state.chain.length <= 1;
 }
 

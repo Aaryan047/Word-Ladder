@@ -40,7 +40,13 @@
       <input id="endInput" maxlength="15" placeholder="end word" autocomplete="off">
       <div class="setupRow">
         <button id="startCustomBtn">Begin</button>
-        <button id="randomiseBtn" class="secondary" type="button">🎲 Randomise</button>
+      </div>
+      <div class="diffRow">
+        <span>Randomise:</span>
+        <button class="diffBtn" data-d="easy">Easy</button>
+        <button class="diffBtn active" data-d="medium">Medium</button>
+        <button class="diffBtn" data-d="hard">Hard</button>
+        <button id="randomiseBtn" type="button">🎲</button>
       </div>
       <p id="customMsg" class="msg"></p>
     </div>
@@ -48,12 +54,6 @@
 
   <!-- GAME AREA (shared) -->
   <section id="gameArea" class="hidden">
-    <div class="targets">
-      <div class="word-badge start" id="startWord"></div>
-      <span class="arrow">→</span>
-      <div class="word-badge end" id="endWord"></div>
-    </div>
-
     <ol id="chain" class="chain"></ol>
 
     <form id="guessForm" autocomplete="off">
