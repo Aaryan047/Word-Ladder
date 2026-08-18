@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word Ladder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Word Ladder</h1>
+  <div class="theme-picker">
+    <button id="modeToggle" aria-label="toggle light/dark"></button>
+    <div id="swatches" class="swatches"></div>
+  </div>
+</header>
+
+<main>
+  <p id="fatalError" class="fatal hidden"></p>
+  <nav class="tabs">
+    <button class="tab active" data-tab="daily">Daily Puzzle</button>
+    <button class="tab" data-tab="custom">Custom / Free Play</button>
+  </nav>
+
+  <!-- DAILY TAB -->
+  <section id="dailyTab" class="tabpanel">
+    <div class="variant-row">
+      <span>Variant:</span>
+      <button class="variantBtn active" data-v="0">A</button>
+      <button class="variantBtn" data-v="1">B</button>
+    </div>
+  </section>
+
+  <!-- CUSTOM TAB -->
+  <section id="customTab" class="tabpanel hidden">
+    <div class="setup" id="customSetup">
+      <input id="startInput" maxlength="15" placeholder="start word" autocomplete="off">
+      <input id="endInput" maxlength="15" placeholder="end word" autocomplete="off">
+      <div class="setupRow">
+        <button id="startCustomBtn">Begin</button>
+        <button id="randomiseBtn" class="secondary" type="button">🎲 Randomise</button>
+      </div>
+      <p id="customMsg" class="msg"></p>
+    </div>
+  </section>
+
+  <!-- GAME AREA (shared) -->
+  <section id="gameArea" class="hidden">
+    <div class="targets">
+      <div class="word-badge start" id="startWord"></div>
+      <span class="arrow">→</span>
+      <div class="word-badge end" id="endWord"></div>
+    </div>
+
+    <ol id="chain" class="chain"></ol>
+
+    <form id="guessForm" autocomplete="off">
+      <input id="guessInput" placeholder="next word..." maxlength="15">
+      <button type="submit">Add</button>
+    </form>
+    <p id="gameMsg" class="msg"></p>
+    <div class="belowRow">
+      <button id="undoBtn" class="secondary" disabled>↩ Undo</button>
+      <button id="giveUpBtn" class="secondary">Reveal optimal route</button>
+    </div>
+  </section>
+
+  <section id="resultArea" class="hidden">
+    <h2 id="resultTitle"></h2>
+    <p id="resultStats"></p>
+    <div>
+      <h3>Your path</h3>
+      <div id="yourPath" class="path-display"></div>
+    </div>
+    <div>
+      <h3>Optimal path</h3>
+      <div id="optimalPath" class="path-display"></div>
+    </div>
+    <button id="playAgainBtn">Play again</button>
+  </section>
+</main>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
